@@ -41,8 +41,11 @@ def unify(
         cList:list[str],
         typeReplace:str = None,
         typeReplacing:str = None,
-        unifications:list[str] = []
+        unifications:list[str] = None
     ) -> list[str] :
+
+    if unifications is None:
+        unifications = []
 
     if len(cList) == 0 : return unifications
 
@@ -69,19 +72,19 @@ def unify(
     t = c[1].strip()
 
     if s == t :
-        return unify(constraintsLeft)
+        return unify(constraintsLeft, unifications = unifications)
     elif typeIsVar(s) and not hasFreeVariables(t, s) :
         unifications.append(f'{s} |-> {t}')
-        return unify(constraintsLeft, s, t)
+        return unify(constraintsLeft, s, t, unifications)
     elif typeIsVar(t) and not hasFreeVariables(s, t) :
         unifications.append(f'{t} |-> {s}')
-        return unify(constraintsLeft, t, s)
+        return unify(constraintsLeft, t, s, unifications)
     elif typeIsRestType(s) and typeIsRestType(t) :
         const1 = f"{s.split('->')[0].strip()} = {t.split('->')[0].strip()}"
         const2 = f"{s.split('->')[1].strip()} = {t.split('->')[1].strip()}"
         constraintsLeft.append(const1)
         constraintsLeft.append(const2)
-        return unify(constraintsLeft)
+        return unify(constraintsLeft, unifications = unifications)
     else :
         raise ReferenceError()
 
