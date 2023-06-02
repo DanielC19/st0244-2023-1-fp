@@ -1,0 +1,4 @@
+a = b
+b = Nat
+c = Bool
+d = a -> c
