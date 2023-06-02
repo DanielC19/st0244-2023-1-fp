@@ -1,10 +1,12 @@
 import os
 
+# Read file and split it to return list
 def readFile(filename:str) -> list[str] :
     f = open(f'{os.getcwd()}/test/{filename}', 'r')
     string = f.read()
     return string.split('\n')
 
+# Verify the constraints have a proper form
 def verifyConstraint(constraints:list[str]) -> bool :
     for constraint in constraints :
         if not '=' in constraint :
@@ -16,6 +18,7 @@ def verifyConstraint(constraints:list[str]) -> bool :
                 return False
     return True
 
+# Check type `t` has `x` as a free variable
 def hasFreeVariables(t:str, x:str) -> bool :
     eTypes = t.split('->')
     for eType in eTypes :
@@ -23,6 +26,7 @@ def hasFreeVariables(t:str, x:str) -> bool :
             return True
     return False
 
+# Check if type is Var
 def typeIsVar(t:str) -> bool :
     if t == 'Nat' :
         return False
@@ -32,6 +36,7 @@ def typeIsVar(t:str) -> bool :
         return False
     return True
 
+# Check if type has the form of type - rest type
 def typeIsRestType(t:str) -> bool :
     if '->' in t :
         return True
@@ -64,6 +69,7 @@ def unify(
                         if not 'Nat' in eType or not 'Bool' in eType:
                             cList[i] = e.replace(typeReplace, typeReplacing)
 
+    # Define current constraint and next ones
     constraint = cList[0]
     constraintsLeft = cList[1:]
 
@@ -71,6 +77,7 @@ def unify(
     s = c[0].strip()
     t = c[1].strip()
 
+    # Unify algorithm logic
     if s == t :
         return unify(constraintsLeft, unifications = unifications)
     elif typeIsVar(s) and not hasFreeVariables(t, s) :
@@ -88,6 +95,7 @@ def unify(
     else :
         raise ReferenceError()
 
+# Call unify function and handles Exceptions
 def main(filename:str) -> None:
     try :
         constraints = readFile(filename)
@@ -108,6 +116,7 @@ def main(filename:str) -> None:
     except ReferenceError :
         print('The constraint set does not unify :(')
 
+# Main function to execute
 if __name__ == '__main__' :
     main("cs1.txt")
     main("cs2.txt")
