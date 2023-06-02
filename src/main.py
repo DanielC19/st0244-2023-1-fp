@@ -88,7 +88,7 @@ def unify(
     else :
         raise ReferenceError()
 
-def main(filename):
+def main(filename:str) -> None:
     try :
         constraints = readFile(filename)
         if len(constraints) == 0 :
