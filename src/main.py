@@ -1,7 +1,7 @@
 import os
 
 def readFile(filename:str) -> list[str] :
-    f = open(f'{os.getcwd()}/test/cs1.txt', 'r')
+    f = open(f'{os.getcwd()}/test/{filename}', 'r')
     string = f.read()
     return string.split('\n')
 
@@ -85,16 +85,16 @@ def unify(
     else :
         raise ReferenceError()
 
-if __name__ == '__main__' :
+def main(filename):
     try :
-        constraints = readFile('cs1.txt')
+        constraints = readFile(filename)
         if len(constraints) == 0 :
             raise IndexError()
         if not verifyConstraint(constraints) :
             raise AttributeError()
 
         subs = unify(constraints)
-        print('The constraint set unifies using the substitution:')
+        print('\nThe constraint set unifies using the substitution:')
         for sub in subs :
             print(sub)
 
@@ -104,3 +104,10 @@ if __name__ == '__main__' :
         print('The constraint set is empty.')
     except ReferenceError :
         print('The constraint set does not unify :(')
+
+if __name__ == '__main__' :
+    main("cs1.txt")
+    main("cs2.txt")
+    main("cs3.txt")
+    main("cs4.txt")
+    main("cs5.txt")

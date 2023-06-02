@@ -1,0 +1,3 @@
+x = Nat
+y = Bool
+z = x -> y
