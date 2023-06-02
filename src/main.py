@@ -4,6 +4,7 @@ import os
 def readFile(filename:str) -> list[str] :
     f = open(f'{os.getcwd()}/test/{filename}', 'r')
     string = f.read()
+    f.close()
     return string.split('\n')
 
 # Verify the constraints have a proper form
