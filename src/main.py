@@ -43,20 +43,13 @@ def typeIsRestType(t:str) -> bool :
         return True
     return False
 
-def unify(
+# Replace the needed types into a constraint list
+def substitution(
         cList:list[str],
         typeReplace:str = None,
         typeReplacing:str = None,
-        unifications:list[str] = None
     ) -> list[str] :
-
-    if unifications is None:
-        unifications = []
-
-    if len(cList) == 0 : return unifications
-
-    if typeReplace is not None and typeReplacing is not None :
-        for i in range(0, len(cList)) :
+    for i in range(0, len(cList)) :
             e = cList[i]
             if not ('Nat' in e or 'Bool' in e) and not '->' in e :
                 cList[i] = e.replace(typeReplace, typeReplacing)
@@ -69,6 +62,25 @@ def unify(
                     for eType in eTypes :
                         if not 'Nat' in eType or not 'Bool' in eType:
                             cList[i] = e.replace(typeReplace, typeReplacing)
+    return cList
+
+# Unify function, implements given algorithm
+def unify(
+        cList:list[str],
+        typeReplace:str = None,
+        typeReplacing:str = None,
+        substitutions:list[str] = None
+    ) -> list[str] :
+
+    if substitutions is None:
+        substitutions = []
+
+    # If there's no more constraints return substitutions
+    if len(cList) == 0 : return substitutions
+
+    # Check if there's need to apply substitution
+    if typeReplace is not None and typeReplacing is not None :
+        cList = substitution(cList, typeReplace, typeReplacing)
 
     # Define current constraint and next ones
     constraint = cList[0]
@@ -80,19 +92,19 @@ def unify(
 
     # Unify algorithm logic
     if s == t :
-        return unify(constraintsLeft, unifications = unifications)
+        return unify(constraintsLeft, substitutions = substitutions)
     elif typeIsVar(s) and not hasFreeVariables(t, s) :
-        unifications.append(f'{s} |-> {t}')
-        return unify(constraintsLeft, s, t, unifications)
+        substitutions.append(f'{s} |-> {t}')
+        return unify(constraintsLeft, s, t, substitutions)
     elif typeIsVar(t) and not hasFreeVariables(s, t) :
-        unifications.append(f'{t} |-> {s}')
-        return unify(constraintsLeft, t, s, unifications)
+        substitutions.append(f'{t} |-> {s}')
+        return unify(constraintsLeft, t, s, substitutions)
     elif typeIsRestType(s) and typeIsRestType(t) :
         const1 = f"{s.split('->')[0].strip()} = {t.split('->')[0].strip()}"
         const2 = f"{s.split('->')[1].strip()} = {t.split('->')[1].strip()}"
         constraintsLeft.append(const1)
         constraintsLeft.append(const2)
-        return unify(constraintsLeft, unifications = unifications)
+        return unify(constraintsLeft, substitutions = substitutions)
     else :
         raise ReferenceError()
 
