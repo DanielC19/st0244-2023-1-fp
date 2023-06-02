@@ -1,6 +1,7 @@
 # define python compiler
 PY = python
+PYFLAGS = -Wd
 
 # Execute the program
 run:
-	$(PY) src\main.py
+	$(PY) $(PYFLAGS) src\main.py
