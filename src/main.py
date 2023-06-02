@@ -15,7 +15,7 @@ def verifyConstraint(constraints:list[str]) -> bool :
         if not len(constraint.split('=')) == 2 :
             return False
         for t in constraint.split('=') :
-            if not t.strip()[0].isalpha() :
+            if not t.strip()[0].isalpha() and not t.strip()[0] == '(' :
                 return False
     return True
 
