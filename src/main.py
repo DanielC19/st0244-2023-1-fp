@@ -17,8 +17,10 @@ def verifyConstraint(constraints:list[str]) -> bool :
     return True
 
 def hasFreeVariables(t:str, x:str) -> bool :
-    if x in t :
-        return True
+    eTypes = t.split('->')
+    for eType in eTypes :
+        if not ('Nat' in eType or 'Bool' in eType) and x in eType:
+            return True
     return False
 
 def typeIsVar(t:str) -> bool :
@@ -36,20 +38,31 @@ def typeIsRestType(t:str) -> bool :
     return False
 
 def unify(
-        constraints:list[str],
+        cList:list[str],
         typeReplace:str = None,
         typeReplacing:str = None,
         unifications:list[str] = []
     ) -> list[str] :
 
-    if len(constraints) == 0 : return unifications
+    if len(cList) == 0 : return unifications
 
     if typeReplace is not None and typeReplacing is not None :
-        for i in range(0, len(constraints)) :
-            constraints[i] = constraints[i].replace(typeReplace, typeReplacing)
+        for i in range(0, len(cList)) :
+            e = cList[i]
+            if not ('Nat' in e or 'Bool' in e) and not '->' in e :
+                cList[i] = e.replace(typeReplace, typeReplacing)
+            elif ('Nat' in e or 'Bool' in e) and not '->' in e :
+                continue
+            else :
+                eRestTypes = e.split('=')
+                for eRestType in eRestTypes :
+                    eTypes = eRestType.split('->')
+                    for eType in eTypes :
+                        if not 'Nat' in eType or not 'Bool' in eType:
+                            cList[i] = e.replace(typeReplace, typeReplacing)
 
-    constraint = constraints[0]
-    constraintsLeft = constraints[1:]
+    constraint = cList[0]
+    constraintsLeft = cList[1:]
 
     c = constraint.split('=')
     s = c[0].strip()
@@ -66,7 +79,8 @@ def unify(
     elif typeIsRestType(s) and typeIsRestType(t) :
         const1 = f"{s.split('->')[0].strip()} = {t.split('->')[0].strip()}"
         const2 = f"{s.split('->')[1].strip()} = {t.split('->')[1].strip()}"
-        constraintsLeft.append(const1, const2)
+        constraintsLeft.append(const1)
+        constraintsLeft.append(const2)
         return unify(constraintsLeft)
     else :
         raise ReferenceError()
